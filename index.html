@@ -1962,7 +1962,31 @@ function exportPDF(){
   </table>
   <div class="footer"><span>M.S Segurança e Serviços — Sistema de Gestão de Atestados</span><span>Total de dias: ${totalDias} dias de afastamento</span></div>
   <script>window.onload=()=>{ window.print(); }<\/script>
-  </body></html>`;
+  
+<div id="debugPanel" style="display:none;position:fixed;bottom:0;left:0;right:0;max-height:40vh;overflow-y:auto;background:#1a1a1a;color:#ff6b6b;font-size:11px;font-family:monospace;padding:10px;z-index:99999;border-top:3px solid #ff6b6b">
+  <div style="color:#fff;font-weight:bold;margin-bottom:6px">⚠️ Erros JS (debug):</div>
+  <div id="debugLog"></div>
+</div>
+<script>
+window.onerror = function(msg, src, line, col, err){
+  var p = document.getElementById('debugPanel');
+  var l = document.getElementById('debugLog');
+  if(p && l){
+    p.style.display='block';
+    l.innerHTML += '<div style="margin-bottom:4px;border-bottom:1px solid #333;padding-bottom:4px">❌ '+msg+'<br><span style="color:#aaa">'+src+' linha '+line+'</span></div>';
+  }
+};
+window.addEventListener('unhandledrejection', function(e){
+  var p = document.getElementById('debugPanel');
+  var l = document.getElementById('debugLog');
+  if(p && l){
+    p.style.display='block';
+    l.innerHTML += '<div style="margin-bottom:4px;border-bottom:1px solid #333;padding-bottom:4px">🔴 Promise rejeitada: '+(e.reason||e)+'</div>';
+  }
+});
+</script>
+
+</body></html>`;
 
   const blob=new Blob([html],{type:'text/html;charset=utf-8'});
   const url=URL.createObjectURL(blob);
@@ -1997,5 +2021,29 @@ function showToast(msg,type='success'){
   setTimeout(()=>{ t.style.display='none'; },3200);
 }
 </script>
+
+<div id="debugPanel" style="display:none;position:fixed;bottom:0;left:0;right:0;max-height:40vh;overflow-y:auto;background:#1a1a1a;color:#ff6b6b;font-size:11px;font-family:monospace;padding:10px;z-index:99999;border-top:3px solid #ff6b6b">
+  <div style="color:#fff;font-weight:bold;margin-bottom:6px">⚠️ Erros JS (debug):</div>
+  <div id="debugLog"></div>
+</div>
+<script>
+window.onerror = function(msg, src, line, col, err){
+  var p = document.getElementById('debugPanel');
+  var l = document.getElementById('debugLog');
+  if(p && l){
+    p.style.display='block';
+    l.innerHTML += '<div style="margin-bottom:4px;border-bottom:1px solid #333;padding-bottom:4px">❌ '+msg+'<br><span style="color:#aaa">'+src+' linha '+line+'</span></div>';
+  }
+};
+window.addEventListener('unhandledrejection', function(e){
+  var p = document.getElementById('debugPanel');
+  var l = document.getElementById('debugLog');
+  if(p && l){
+    p.style.display='block';
+    l.innerHTML += '<div style="margin-bottom:4px;border-bottom:1px solid #333;padding-bottom:4px">🔴 Promise rejeitada: '+(e.reason||e)+'</div>';
+  }
+});
+</script>
+
 </body>
 </html>
