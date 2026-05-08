@@ -514,7 +514,7 @@
 <body>
 
 <!-- LOADING -->
-<div id="loadingOverlay">
+<div id="loadingOverlay" class="hidden">
   <div class="spinner"></div>
   <div class="loading-text">Conectando ao Firebase…</div>
 </div>
@@ -550,7 +550,7 @@
 </div>
 
 <!-- LOGIN -->
-<div id="loginScreen">
+<div id="loginScreen" style="display:flex">
   <div class="login-card">
     <div class="login-logo">
       <div class="login-ms"><span class="m">M</span><span class="dot">.</span><span class="s">S</span></div>
@@ -906,13 +906,11 @@ window.addEventListener('DOMContentLoaded', ()=>{
   try {
     if(!firebase.apps.length){ firebase.initializeApp(FIREBASE_CFG); }
     db = firebase.firestore();
+    startRealtimeListeners();
   } catch(err){
-    alert('Erro ao inicializar Firebase: ' + err.message);
-    return;
+    document.getElementById('loginScreen').style.display='flex';
+    alert('Erro Firebase: ' + err.message);
   }
-  hideLoading();
-  showLoginScreen();
-  startRealtimeListeners();
 });
 
 function showErroConexao(msg){
