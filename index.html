@@ -53,7 +53,7 @@
   .cfg-saved{display:none;text-align:center;padding:8px 0 0;font-size:12px;color:#28a745;font-weight:700}
 
   /* LOADING OVERLAY */
-  #loadingOverlay{display:none;position:fixed;inset:0;background:rgba(14,31,74,.85);z-index:9999;
+  #loadingOverlay{position:fixed;inset:0;background:rgba(14,31,74,.85);z-index:9999;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
   #loadingOverlay.hidden{display:none}
   .spinner{width:52px;height:52px;border:5px solid rgba(255,255,255,.2);border-top-color:#fff;
@@ -514,7 +514,7 @@
 <body>
 
 <!-- LOADING -->
-<div id="loadingOverlay">
+<div id="loadingOverlay" style="display:none!important">
   <div class="spinner"></div>
   <div class="loading-text">Conectando ao Firebase…</div>
 </div>
@@ -990,8 +990,8 @@ function cargoEmoji(nome){
 }
 
 // ── SCREEN HELPERS ────────────────────────────────────────
-function showLoading(msg=''){ document.getElementById('loadingOverlay').classList.remove('hidden'); document.querySelector('.loading-text').textContent=msg||'Aguarde…'; }
-function hideLoading(){ document.getElementById('loadingOverlay').classList.add('hidden'); }
+function showLoading(msg=''){ const ol=document.getElementById('loadingOverlay'); ol.style.display='flex'; ol.style.removeProperty('important'); document.querySelector('.loading-text').textContent=msg||'Aguarde…'; }
+function hideLoading(){ document.getElementById('loadingOverlay').style.display='none'; }
 function showLoginScreen(){ document.getElementById('loginScreen').style.display='flex'; document.getElementById('app').style.display='none'; }
 function setSyncStatus(ok){
   const dot=document.getElementById('syncDot');
