@@ -903,14 +903,14 @@ let unsubCargos       = null;
 
 // ── INIT ──────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', ()=>{
+  // Login já visível via HTML — inicializa Firebase em background sem bloquear
   try {
     if(!firebase.apps.length){ firebase.initializeApp(FIREBASE_CFG); }
     db = firebase.firestore();
-    startRealtimeListeners();
   } catch(err){
-    document.getElementById('loginScreen').style.display='flex';
-    alert('Erro Firebase: ' + err.message);
+    console.error('Firebase init error:', err);
   }
+  // Listeners só sobem após login (chamados no doLogin)
 });
 
 function showErroConexao(msg){
@@ -1075,6 +1075,8 @@ function confirmPwd(){
 // ── LOGIN ─────────────────────────────────────────────────
 async function doLogin(r){
   currentRole=r;
+  // Sobe listeners agora que temos um usuário logado
+  if(!unsubAtestados) startRealtimeListeners();
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('app').style.display='flex';
   document.getElementById('roleLabel').textContent=r==='rh'?'🗂️ Recursos Humanos':'👁️ Supervisor';
