@@ -908,15 +908,48 @@ window.addEventListener('DOMContentLoaded', async ()=>{
     if(firebase.apps.length){ await firebase.app().delete(); }
     firebase.initializeApp(FIREBASE_CFG);
     db = firebase.firestore();
-    await db.collection('supervisores').limit(1).get();
+
+    // Testa conexão com timeout de 8 segundos
+    await Promise.race([
+      db.collection('supervisores').limit(1).get(),
+      new Promise((_,reject) => setTimeout(()=>reject(new Error('Tempo esgotado. Verifique sua conexão com a internet.')), 8000))
+    ]);
+
     hideLoading();
     showLoginScreen();
     startRealtimeListeners();
   } catch(err){
     hideLoading();
-    showToast('Erro ao conectar: ' + err.message, 'error');
+    showErroConexao(err.message);
   }
 });
+
+function showErroConexao(msg){
+  // Esconde tudo e mostra tela de erro clara
+  document.getElementById('configScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display  = 'none';
+  document.getElementById('app').style.display          = 'none';
+
+  const div = document.createElement('div');
+  div.style.cssText = 'min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(140deg,#0e1f4a,#2B5BAD);font-family:Barlow,sans-serif';
+  div.innerHTML = `
+    <div style="background:#fff;border-radius:20px;padding:44px 40px;max-width:480px;width:95vw;box-shadow:0 32px 80px rgba(0,0,0,.35);text-align:center">
+      <div style="font-size:52px;margin-bottom:16px">⚠️</div>
+      <div style="font-size:20px;font-weight:900;color:#1a2035;margin-bottom:8px">Erro ao conectar ao Firebase</div>
+      <div style="font-size:13px;color:#c62828;background:#fdecea;border-radius:10px;padding:12px 16px;margin:16px 0;word-break:break-word;text-align:left">${msg}</div>
+      <div style="font-size:13px;color:#555;line-height:1.8;text-align:left;margin-bottom:24px">
+        <strong>Verifique:</strong><br>
+        ✅ As regras do Firestore estão publicadas<br>
+        ✅ O projeto <code style="background:#f0f2f7;padding:1px 6px;border-radius:4px">atestado-tipo-2</code> está ativo<br>
+        ✅ O Firestore Database foi criado no console<br>
+        ✅ Sua conexão com a internet está funcionando
+      </div>
+      <button onclick="location.reload()" style="padding:14px 32px;background:#2B5BAD;color:#fff;border:none;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;font-family:Barlow,sans-serif;width:100%">
+        🔄 Tentar novamente
+      </button>
+    </div>`;
+  document.body.appendChild(div);
+}
 
 // ── REAL-TIME LISTENERS ───────────────────────────────────
 function startRealtimeListeners(){
