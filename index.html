@@ -902,26 +902,17 @@ let unsubSupervisores = null;
 let unsubCargos       = null;
 
 // ── INIT ──────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', async ()=>{
-  showLoading('Conectando ao Firebase…');
+window.addEventListener('DOMContentLoaded', ()=>{
   try {
-    if(firebase.apps.length){ await firebase.app().delete(); }
-    firebase.initializeApp(FIREBASE_CFG);
+    if(!firebase.apps.length){ firebase.initializeApp(FIREBASE_CFG); }
     db = firebase.firestore();
-
-    // Testa conexão com timeout de 8 segundos
-    await Promise.race([
-      db.collection('supervisores').limit(1).get(),
-      new Promise((_,reject) => setTimeout(()=>reject(new Error('Tempo esgotado. Verifique sua conexão com a internet.')), 8000))
-    ]);
-
-    hideLoading();
-    showLoginScreen();
-    startRealtimeListeners();
   } catch(err){
-    hideLoading();
-    showErroConexao(err.message);
+    alert('Erro ao inicializar Firebase: ' + err.message);
+    return;
   }
+  hideLoading();
+  showLoginScreen();
+  startRealtimeListeners();
 });
 
 function showErroConexao(msg){
